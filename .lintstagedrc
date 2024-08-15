@@ -1,0 +1,4 @@
+{
+  "src/**/*.{ts}": "eslint --cache --fix",
+  "src/**/*.{ts,md}": "prettier --write --ignore-unknown"
+}
