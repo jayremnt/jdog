@@ -1,0 +1,37 @@
+{
+  "name": "jdog",
+  "version": "1.0.0",
+  "description": "Just a discord bot",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc && tsc-alias",
+    "dev": "tsc-watch --onSuccess \"tsc-alias\"",
+    "lint": "eslint --ext .ts src",
+    "lint:fix": "npm run lint -- --fix",
+    "prettier": "prettier --write '**/*.{ts,json,css,scss,md}'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jayremnt/jdog.git"
+  },
+  "keywords": [
+    "discord-bot"
+  ],
+  "author": "Jayremnt",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jayremnt/jdog/issues"
+  },
+  "homepage": "https://github.com/jayremnt/jdog#readme",
+  "dependencies": {
+    "discord.js": "^14.15.3",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.3.0",
+    "eslint": "^9.9.0",
+    "tsc-alias": "^1.8.10",
+    "tsc-watch": "^6.2.0",
+    "typescript": "^5.5.4"
+  }
+}
