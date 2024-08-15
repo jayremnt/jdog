@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "build": "tsc && tsc-alias",
-    "dev": "tsc-watch --onSuccess \"tsc-alias\"",
+    "dev": "nodemon",
     "lint": "eslint --ext .ts src",
     "lint:fix": "npm run lint -- --fix",
     "prettier": "prettier --write '**/*.{ts,json,css,scss,md}'",
@@ -43,8 +43,9 @@
     "eslint-plugin-prettier": "^5.0.0",
     "husky": "^9.1.4",
     "lint-staged": "^15.2.9",
+    "nodemon": "^3.1.4",
+    "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.10",
-    "tsc-watch": "^6.2.0",
     "typescript": "^5.5.4"
   }
 }
