@@ -27,11 +27,13 @@
   "homepage": "https://github.com/jayremnt/jdog#readme",
   "dependencies": {
     "discord.js": "^14.15.3",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "i18n": "^0.15.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.4.0",
     "@commitlint/config-conventional": "^19.2.2",
+    "@types/i18n": "^0.13.12",
     "@types/node": "^22.3.0",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
