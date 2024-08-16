@@ -12,16 +12,17 @@ import {
 } from 'discord.js';
 
 import appConfigs from '@/configs/app.config';
+import i18n from '@/configs/i18n.config';
 import type { SlashCommand } from '@/types/discord';
 import findJob from '@/utils/findJob';
-import reply from '@/jobs/reply';
+import sendMessage from '@/jobs/sendMessage';
 
 export default class DiscordService {
   public slashCommandsCollection = new Collection<string, SlashCommand>();
 
   public slashCommands: ApplicationCommandDataResolvable[] = [];
 
-  private client: Client;
+  private readonly client: Client;
 
   public constructor() {
     this.client = new Client({
@@ -87,8 +88,8 @@ export default class DiscordService {
       console.log(
         `Successfully reloaded ${data.length} application (/) commands.`
       );
-    } catch (error) {
-      console.error(error);
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -108,16 +109,16 @@ export default class DiscordService {
 
       try {
         await command.execute(interaction);
-      } catch (error) {
-        console.error(error);
+      } catch (e) {
+        console.error(e);
         if (interaction.replied || interaction.deferred) {
           await interaction.followUp({
-            content: 'There was an error while executing this command!',
+            content: i18n.__('error_occurred'),
             ephemeral: true,
           });
         } else {
           await interaction.reply({
-            content: 'There was an error while executing this command!',
+            content: i18n.__('error_occurred'),
             ephemeral: true,
           });
         }
@@ -133,19 +134,23 @@ export default class DiscordService {
       const messageID = message.id;
       const messageContent = message.content;
 
-      const job = findJob(messageContent);
-      if (!job) return;
+      try {
+        const job = findJob(messageContent);
+        if (!job) return;
 
-      switch (job.name) {
-        case 'ping':
-        case 'question':
-          await reply(this.client, channelID, job.response, {
-            referenceMessageID: messageID,
-          });
-          break;
-
-        default:
-          break;
+        switch (job.name) {
+          case 'ping':
+          case 'question':
+            await sendMessage(this.client, channelID, job.response, {
+              referenceMessageID: messageID,
+            });
+            break;
+          default:
+            break;
+        }
+      } catch (e) {
+        await sendMessage(this.client, channelID, i18n.__('error_occurred'));
+        console.error(e);
       }
     });
   };

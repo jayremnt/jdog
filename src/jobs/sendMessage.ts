@@ -1,6 +1,6 @@
 import { Client, TextChannel } from 'discord.js';
 
-const reply = async (
+const sendMessage = async (
   client: Client,
   channelID: string,
   message: string,
@@ -21,9 +21,9 @@ const reply = async (
 
   const channel = await client.channels.fetch(channelID);
   if (!channel) {
-    return console.log(`Channel ${channelID} not found`);
+    return console.error(`Channel ${channelID} not found`);
   }
   await (channel as TextChannel).send(json);
 };
 
-export default reply;
+export default sendMessage;

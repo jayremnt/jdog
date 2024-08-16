@@ -1,4 +1,5 @@
 {
   "ping": "Pong",
-  "question": "?"
+  "question": "?",
+  "error_occurred": "Error occurred"
 }
