@@ -2,7 +2,7 @@
   "name": "jdog",
   "version": "1.0.0",
   "description": "Just a discord bot",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
     "build": "tsc && tsc-alias",
     "dev": "nodemon",
