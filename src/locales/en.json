@@ -1,5 +1,6 @@
 {
   "ping": "Pong",
   "question": "?",
-  "error_occurred": "Error occurred"
+  "error_occurred": "Error occurred",
+  "welcome": "Yo <@{{uid}}>, good to see you {{guildName}}!"
 }

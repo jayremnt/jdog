@@ -1,5 +1,6 @@
 {
   "ping": "Ping cđmm?",
   "question": "?",
-  "error_occurred": "Đã xảy ra lỗi"
+  "error_occurred": "Đã xảy ra lỗi",
+  "welcome": "Yo <@{{uid}}>, chào mừng đến với {{guildName}}!"
 }

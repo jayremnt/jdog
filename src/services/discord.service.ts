@@ -39,7 +39,8 @@ export default class DiscordService {
     await this.login();
     // await this.registerSlashCommands();
     // this.onInteractionCreate();
-    this.onMessageCreate();
+    this.listenMessages();
+    this.listenGuildJoin();
   };
 
   private login = async () => {
@@ -126,7 +127,7 @@ export default class DiscordService {
     });
   };
 
-  private onMessageCreate = () => {
+  private listenMessages = () => {
     this.client.on(Events.MessageCreate, async (message) => {
       if (message.author.bot) return;
 
@@ -152,6 +153,20 @@ export default class DiscordService {
         await sendMessage(this.client, channelID, i18n.__('error_occurred'));
         console.error(e);
       }
+    });
+  };
+
+  private listenGuildJoin = () => {
+    this.client.on(Events.GuildMemberAdd, async (member) => {
+      const message = i18n.__('welcome', {
+        uid: member.user.id,
+        guildName: member.guild.name,
+      });
+      await sendMessage(
+        this.client,
+        appConfigs.DISCORD_WELCOME_CHANNEL_ID,
+        message
+      );
     });
   };
 }

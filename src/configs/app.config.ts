@@ -8,6 +8,7 @@ const appConfigs = {
   DISCORD_TOKEN: process.env.DISCORD_TOKEN || '',
   DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID || '',
   DISCORD_GUILD_ID: process.env.DISCORD_GUILD_ID || '',
+  DISCORD_WELCOME_CHANNEL_ID: process.env.DISCORD_WELCOME_CHANNEL_ID || '',
 };
 
 export default appConfigs;
