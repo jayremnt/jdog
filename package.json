@@ -4,6 +4,7 @@
   "description": "Just a discord bot",
   "main": "index.js",
   "scripts": {
+    "start": "npm run build && node build/index.js",
     "build": "tsc && tsc-alias",
     "dev": "nodemon",
     "lint": "eslint --ext .ts src",
