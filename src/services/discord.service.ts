@@ -11,9 +11,10 @@ import {
   Routes,
 } from 'discord.js';
 
-import appConfigs from '@/configs';
+import appConfigs from '@/configs/app.config';
 import type { SlashCommand } from '@/types/discord';
-import loadMessageResponse from '@/utils/loadResponse';
+import findJob from '@/utils/findJob';
+import reply from '@/jobs/reply';
 
 export default class DiscordService {
   public slashCommandsCollection = new Collection<string, SlashCommand>();
@@ -125,18 +126,27 @@ export default class DiscordService {
   };
 
   private onMessageCreate = () => {
-    this.client.on(Events.MessageCreate, (message) => {
+    this.client.on(Events.MessageCreate, async (message) => {
       if (message.author.bot) return;
 
+      const channelID = message.channelId;
+      const messageID = message.id;
       const messageContent = message.content;
-      const messageResponse = loadMessageResponse(messageContent);
-      if (!messageResponse) return;
 
-      const { channel } = message;
-      channel.send({
-        content: messageResponse,
-        reply: { messageReference: message.id },
-      });
+      const job = findJob(messageContent);
+      if (!job) return;
+
+      switch (job.name) {
+        case 'ping':
+        case 'question':
+          await reply(this.client, channelID, job.response, {
+            referenceMessageID: messageID,
+          });
+          break;
+
+        default:
+          break;
+      }
     });
   };
 }
