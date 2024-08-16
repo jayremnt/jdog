@@ -13,6 +13,7 @@ import {
 
 import appConfigs from '@/configs';
 import type { SlashCommand } from '@/types/discord';
+import loadMessageResponse from '@/utils/loadResponse';
 
 export default class DiscordService {
   public slashCommandsCollection = new Collection<string, SlashCommand>();
@@ -25,17 +26,18 @@ export default class DiscordService {
     this.client = new Client({
       intents: [
         GatewayIntentBits.Guilds,
-        // GatewayIntentBits.GuildMessages,
-        // GatewayIntentBits.MessageContent,
-        // GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMembers,
       ],
     });
   }
 
   public init = async () => {
     await this.login();
-    await this.registerSlashCommands();
-    this.onInteractionCreate();
+    // await this.registerSlashCommands();
+    // this.onInteractionCreate();
+    this.onMessageCreate();
   };
 
   private login = async () => {
@@ -119,6 +121,22 @@ export default class DiscordService {
           });
         }
       }
+    });
+  };
+
+  private onMessageCreate = () => {
+    this.client.on(Events.MessageCreate, (message) => {
+      if (message.author.bot) return;
+
+      const messageContent = message.content;
+      const messageResponse = loadMessageResponse(messageContent);
+      if (!messageResponse) return;
+
+      const { channel } = message;
+      channel.send({
+        content: messageResponse,
+        reply: { messageReference: message.id },
+      });
     });
   };
 }
