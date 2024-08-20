@@ -1,38 +1,43 @@
+import { Message } from 'discord.js';
+
 import sendMessage from '@/jobs/sendMessage';
-import appConfigs from '@/configs/app.config';
 import i18n from '@/configs/i18n.config';
 import { Ctx } from '@/types/discord';
 
 const setMute = async (
   ctx: Ctx,
+  referenceMessage: Message,
   mute: boolean,
   userIDs: string[],
-  channelID: string,
   {
-    referenceMessageID,
     reason,
   }: {
-    referenceMessageID?: string;
     reason?: string;
   } = {}
 ) => {
+  const { guild } = referenceMessage;
+  const channelID = referenceMessage.channel.id;
+
   if (!userIDs.length) {
     return sendMessage(ctx, channelID, i18n.__('please_provide_users'));
   }
 
-  const guild = ctx.client.guilds.cache.get(appConfigs.DISCORD_GUILD_ID);
-  if (!guild) {
-    return console.error(`Guild ${appConfigs.DISCORD_GUILD_ID} not found`);
-  }
-
   for (const user of userIDs) {
-    const member = guild.members.cache.get(user);
+    const member = await guild!.members.fetch({
+      user,
+      force: true,
+    });
     if (member?.voice?.channel) await member.voice.setMute(mute, reason);
   }
 
-  return sendMessage(ctx, channelID, i18n.__('muted_users'), {
-    referenceMessageID,
-  });
+  return sendMessage(
+    ctx,
+    channelID,
+    i18n.__(mute ? 'muted_users' : 'unmuted_users'),
+    {
+      referenceMessageID: referenceMessage.id,
+    }
+  );
 };
 
 export default setMute;

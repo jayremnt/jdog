@@ -25,7 +25,7 @@ export default class DiscordService {
 
   private readonly client: Client;
 
-  private ctx: Ctx;
+  private readonly ctx: Ctx;
 
   public constructor() {
     this.client = new Client({
@@ -34,6 +34,7 @@ export default class DiscordService {
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildVoiceStates,
       ],
     });
 
@@ -44,8 +45,7 @@ export default class DiscordService {
     await this.login();
     // await this.registerSlashCommands();
     // this.onInteractionCreate();
-    this.listenMessages();
-    this.listenGuildJoin();
+    this.onMessages();
   };
 
   private login = async () => {
@@ -132,7 +132,7 @@ export default class DiscordService {
     });
   };
 
-  private listenMessages = () => {
+  private onMessages = () => {
     this.client.on(Events.MessageCreate, async (message) => {
       if (message.author.bot) return;
 
@@ -147,20 +147,29 @@ export default class DiscordService {
 
         switch (job.name) {
           case 'ping':
+            await sendMessage(this.ctx, channelID, i18n.__('ping'), {
+              referenceMessageID: messageID,
+            });
+            break;
           case 'question':
-            await sendMessage(this.ctx, channelID, job.response, {
+            await sendMessage(this.ctx, channelID, i18n.__('question'), {
               referenceMessageID: messageID,
             });
             break;
           case 'mute':
             await setMute(
               this.ctx,
+              message,
               true,
-              mentionsUsers.map((u) => u.id),
-              channelID,
-              {
-                referenceMessageID: messageID,
-              }
+              mentionsUsers.map((u) => u.id)
+            );
+            break;
+          case 'unmute':
+            await setMute(
+              this.ctx,
+              message,
+              false,
+              mentionsUsers.map((u) => u.id)
             );
             break;
           default:
@@ -170,20 +179,6 @@ export default class DiscordService {
         await sendMessage(this.ctx, channelID, i18n.__('error_occurred'));
         console.error(e);
       }
-    });
-  };
-
-  private listenGuildJoin = () => {
-    this.client.on(Events.GuildMemberAdd, async (member) => {
-      const message = i18n.__('welcome', {
-        uid: member.user.id,
-        guildName: member.guild.name,
-      });
-      await sendMessage(
-        this.ctx,
-        appConfigs.DISCORD_WELCOME_CHANNEL_ID,
-        message
-      );
     });
   };
 }

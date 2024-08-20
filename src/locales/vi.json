@@ -1,8 +1,9 @@
 {
-	"ping": "Ping cđmm?",
-	"question": "?",
-	"error_occurred": "Đã xảy ra lỗi",
-	"welcome": "Yo <@{{uid}}>, chào mừng đến với {{guildName}}!",
-	"mute": "mute",
-	"muted_users": "Đã mute mấy thằng l"
+  "ping": "Ping cđmm?",
+  "question": "?",
+  "error_occurred": "Đã xảy ra lỗi",
+  "welcome": "Yo <@{{uid}}>, chào mừng đến với {{guildName}}!",
+  "mute": "mute",
+  "muted_users": "Đã mute mấy thằng l",
+  "unmuted_users": "Đã bật mic mấy thằng l"
 }
