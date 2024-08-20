@@ -18,4 +18,10 @@ export const Jobs = [
     keywordType: KeywordTypes.EXACT,
     response: i18n.__('question'),
   },
+  {
+    name: 'mute',
+    keywords: ['mute'],
+    keywordType: KeywordTypes.INCLUDE,
+    response: i18n.__('mute'),
+  },
 ];

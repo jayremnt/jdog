@@ -13,9 +13,10 @@ import {
 
 import appConfigs from '@/configs/app.config';
 import i18n from '@/configs/i18n.config';
-import type { SlashCommand } from '@/types/discord';
+import type { Ctx, SlashCommand } from '@/types/discord';
 import findJob from '@/utils/findJob';
 import sendMessage from '@/jobs/sendMessage';
+import setMute from '@/jobs/setMute';
 
 export default class DiscordService {
   public slashCommandsCollection = new Collection<string, SlashCommand>();
@@ -23,6 +24,8 @@ export default class DiscordService {
   public slashCommands: ApplicationCommandDataResolvable[] = [];
 
   private readonly client: Client;
+
+  private ctx: Ctx;
 
   public constructor() {
     this.client = new Client({
@@ -33,6 +36,8 @@ export default class DiscordService {
         GatewayIntentBits.GuildMembers,
       ],
     });
+
+    this.ctx = { client: this.client };
   }
 
   public init = async () => {
@@ -134,6 +139,7 @@ export default class DiscordService {
       const channelID = message.channelId;
       const messageID = message.id;
       const messageContent = message.content;
+      const { users: mentionsUsers } = message.mentions;
 
       try {
         const job = findJob(messageContent);
@@ -142,15 +148,26 @@ export default class DiscordService {
         switch (job.name) {
           case 'ping':
           case 'question':
-            await sendMessage(this.client, channelID, job.response, {
+            await sendMessage(this.ctx, channelID, job.response, {
               referenceMessageID: messageID,
             });
+            break;
+          case 'mute':
+            await setMute(
+              this.ctx,
+              true,
+              mentionsUsers.map((u) => u.id),
+              channelID,
+              {
+                referenceMessageID: messageID,
+              }
+            );
             break;
           default:
             break;
         }
       } catch (e) {
-        await sendMessage(this.client, channelID, i18n.__('error_occurred'));
+        await sendMessage(this.ctx, channelID, i18n.__('error_occurred'));
         console.error(e);
       }
     });
@@ -163,7 +180,7 @@ export default class DiscordService {
         guildName: member.guild.name,
       });
       await sendMessage(
-        this.client,
+        this.ctx,
         appConfigs.DISCORD_WELCOME_CHANNEL_ID,
         message
       );

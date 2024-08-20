@@ -1,7 +1,9 @@
-import { Client, TextChannel } from 'discord.js';
+import { TextChannel } from 'discord.js';
+
+import { Ctx } from '@/types/discord';
 
 const sendMessage = async (
-  client: Client,
+  ctx: Ctx,
   channelID: string,
   message: string,
   { referenceMessageID }: { referenceMessageID?: string } = {}
@@ -19,7 +21,7 @@ const sendMessage = async (
     json.reply = { messageReference: referenceMessageID };
   }
 
-  const channel = await client.channels.fetch(channelID);
+  const channel = await ctx.client.channels.fetch(channelID);
   if (!channel) {
     return console.error(`Channel ${channelID} not found`);
   }
