@@ -6,7 +6,6 @@ import {
   Client,
   Collection,
   Events,
-  GatewayIntentBits,
 } from 'discord.js';
 
 import appConfigs from '@/configs/app.config';
@@ -17,30 +16,17 @@ import sendMessage from '@/jobs/sendMessage';
 import setMute from '@/jobs/setMute';
 
 export default class DiscordService {
-  public slashCommandsCollection = new Collection<string, SlashCommand>();
+  slashCommandsCollection = new Collection<string, SlashCommand>();
 
-  public slashCommands: ApplicationCommandDataResolvable[] = [];
-
-  private readonly client: Client;
+  slashCommands: ApplicationCommandDataResolvable[] = [];
 
   private readonly ctx: Ctx;
 
-  public constructor() {
-    // TODO: should we use dependency injection here?
-    this.client = new Client({
-      intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent,
-        GatewayIntentBits.GuildMembers,
-        GatewayIntentBits.GuildVoiceStates,
-      ],
-    });
-
+  constructor(private readonly client: Client) {
     this.ctx = { client: this.client };
   }
 
-  public init = async () => {
+  init = async () => {
     await this.login();
     // await this.registerSlashCommands();
     // this.onInteractionCreate();
@@ -48,10 +34,10 @@ export default class DiscordService {
   };
 
   private login = async () => {
-    await this.client.login(appConfigs.DISCORD_TOKEN);
+    await this.ctx.client.login(appConfigs.DISCORD_TOKEN);
 
     return new Promise<void>((resolve) => {
-      this.client.once(Events.ClientReady, (readyClient) => {
+      this.ctx.client.once(Events.ClientReady, (readyClient) => {
         console.log(`Ready! Logged in as ${readyClient.user.tag}`);
         resolve();
       });
@@ -100,7 +86,7 @@ export default class DiscordService {
   };
 
   private onInteractionCreate = () => {
-    this.client.on(Events.InteractionCreate, async (interaction) => {
+    this.ctx.client.on(Events.InteractionCreate, async (interaction) => {
       if (!interaction.isChatInputCommand()) return;
 
       const command = this.slashCommandsCollection.get(interaction.commandName);
@@ -133,7 +119,7 @@ export default class DiscordService {
   };
 
   private onMessages = () => {
-    this.client.on(Events.MessageCreate, async (message) => {
+    this.ctx.client.on(Events.MessageCreate, async (message) => {
       if (message.author.bot) return;
 
       const channelID = message.channelId;
