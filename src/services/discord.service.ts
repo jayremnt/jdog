@@ -7,8 +7,6 @@ import {
   Collection,
   Events,
   GatewayIntentBits,
-  REST,
-  Routes,
 } from 'discord.js';
 
 import appConfigs from '@/configs/app.config';
@@ -28,6 +26,7 @@ export default class DiscordService {
   private readonly ctx: Ctx;
 
   public constructor() {
+    // TODO: should we use dependency injection here?
     this.client = new Client({
       intents: [
         GatewayIntentBits.Guilds,
@@ -74,7 +73,7 @@ export default class DiscordService {
   };
 
   private registerSlashCommands = async () => {
-    const rest = new REST().setToken(appConfigs.DISCORD_TOKEN);
+    // const rest = new REST().setToken(appConfigs.DISCORD_TOKEN);
 
     try {
       await this.loadSlashCommands();
@@ -83,17 +82,18 @@ export default class DiscordService {
         `Started refreshing ${this.slashCommands.length} application (/) commands.`
       );
 
-      const data: any = await rest.put(
-        Routes.applicationGuildCommands(
-          appConfigs.DISCORD_CLIENT_ID,
-          appConfigs.DISCORD_GUILD_ID
-        ),
-        { body: this.slashCommands }
-      );
-
-      console.log(
-        `Successfully reloaded ${data.length} application (/) commands.`
-      );
+      // TODO: load joined guilds
+      // const data: any = await rest.put(
+      //   Routes.applicationGuildCommands(
+      //     appConfigs.DISCORD_CLIENT_ID,
+      //     appConfigs.DISCORD_GUILD_ID
+      //   ),
+      //   { body: this.slashCommands }
+      // );
+      //
+      // console.log(
+      //   `Successfully reloaded ${data.length} application (/) commands.`
+      // );
     } catch (e) {
       console.error(e);
     }
